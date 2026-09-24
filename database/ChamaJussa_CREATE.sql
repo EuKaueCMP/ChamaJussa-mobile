@@ -1,0 +1,62 @@
+CREATE DATABASE ChamaJussa
+GO
+
+USE ChamaJussa
+GO
+
+CREATE TABLE Usuario
+(
+	usuarioID UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
+	nome VARCHAR(50) NOT NULL,
+	email VARCHAR(60) NOT NULL UNIQUE,
+	senha VARBINARY(MAX),
+	NIF VARCHAR(11) UNIQUE,
+)
+
+CREATE TABLE StatusItem
+(
+	statusID INT PRIMARY KEY IDENTITY(1,1), 
+	nomeStatus NVARCHAR(20)
+)
+GO
+
+CREATE TABLE Fila
+(
+	filaID INT PRIMARY KEY IDENTITY(1,1),
+	nomeFila VARCHAR(20)
+)
+GO
+
+CREATE TABLE Localizacao
+(
+	localizacaoID INT IDENTITY(1,1) PRIMARY KEY,
+	nome NVARCHAR(100) NOT NULL,
+	andar NVARCHAR(50)
+)
+GO
+
+CREATE TABLE OrdemServico
+(
+	ordemServicoID INT PRIMARY KEY IDENTITY(1,1),
+	nomeItem VARCHAR(50) NOT NULL,
+	dataCriacao DATETIME2(0) NOT NULL,
+	descricao NVARCHAR(255) NOT NULL,
+	imagem VARCHAR(255),
+	statusID INT NOT NULL,
+	usuarioSolicitante UNIQUEIDENTIFIER NOT NULL,
+	filaID INT NOT NULL,
+	localizacaoID INT NOT NULL,
+	CONSTRAINT ordemServico_FilaID_FK FOREIGN KEY (filaID) 
+	REFERENCES Fila(filaID) ON DELETE CASCADE,
+
+	CONSTRAINT ordemServico_usuarioSolicitante_FK FOREIGN KEY(usuarioSolicitante) 
+	REFERENCES Usuario(usuarioID) ON DELETE CASCADE,
+
+	CONSTRAINT ordemServico_Status_FK FOREIGN KEY(statusID) 
+	REFERENCES StatusItem(statusID) ON DELETE CASCADE,
+
+	CONSTRAINT ordemServico_Localizacao_FK FOREIGN KEY(localizacaoID)
+	REFERENCES Localizacao(localizacaoID) ON DELETE CASCADE
+)
+GO
+
